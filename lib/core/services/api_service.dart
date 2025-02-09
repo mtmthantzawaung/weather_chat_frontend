@@ -37,12 +37,12 @@ class ApiService {
       },
       body: jsonEncode(data),
     );
-
+  
     // Handle token expiration (401 error)
     if (response.statusCode == 401) {
       bool refreshed = await refreshAccessToken();
       if (refreshed) {
-        return getRequest(endpoint); // Retry the request
+        return postRequest(endpoint, data); // Retry the request
       }
     }
 

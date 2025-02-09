@@ -3,63 +3,87 @@ import 'package:flutter/material.dart';
 import 'package:weather_chat_frontend/core/constants/api_constants.dart';
 import 'package:weather_chat_frontend/core/services/api_service.dart';
 import 'package:weather_chat_frontend/core/storage/secure_storage.dart';
+import 'package:weather_chat_frontend/models/request/login/login_request.dart';
+import 'package:weather_chat_frontend/models/request/register/register_request.dart';
+import 'package:weather_chat_frontend/models/response/login/login_response.dart';
+import 'package:weather_chat_frontend/models/user/User.dart';
 
 class AuthService {
-  final _api = ApiService();
+  final ApiService _api;
+
+  AuthService(this._api);
 
   // Loign
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<LoginResponse?> login(LoginRequest request) async {
     try {
-      final data = {
-        "email": email,
-        "password": password,
-      };
-      final response = await _api.postRequest(ApiConstants.loginEndpoint, data);
+      final response =
+          await _api.postRequest(ApiConstants.loginEndpoint, request.toJson());
+      final responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final accessToken = responseData["accessToken"];
-        final refreshToken = responseData["refreshToken"];
+      if (responseData["success"] == true) {
+        final transformedJson = Map<String, dynamic>.from(responseData)
+          ..addAll({
+            'accessToken': responseData['data']['accessToken'],
+            'refreshToken': responseData['data']['refreshToken'],
+            'user': responseData['data']['user'],
+          });
+        final loginResponse = LoginResponse.fromJson(transformedJson);
 
-        // Store tokens securely
-        await SecureStorage.saveTokens(accessToken, refreshToken);
+        // Store tokens & user securely
+        await SecureStorage.saveTokens(
+            loginResponse.accessToken!, loginResponse.refreshToken!);
+        await SecureStorage.saveUser(loginResponse.user!);
 
-        return responseData;
+        return loginResponse;
       } else {
-        final responseBody = jsonDecode(response.body);
         throw Exception(
-            responseBody["message"] ?? "Login failed. Please try again.");
+            responseData["message"] ?? "Login failed. Please try again.");
       }
     } catch (e) {
       debugPrint("Login Error: $e");
-      rethrow;
+      return null;
     }
   }
 
   // Register
-  Future<Map<String, dynamic>> register(
-      String email, String password, String username, int age) async {
+  Future<LoginResponse?> register(RegisterRequest request) async {
     try {
-      final data = {
-        "email": email,
-        "password": password,
-        "username": username,
-        "age": age,
-      };
-      final response =
-          await _api.postRequest(ApiConstants.registerEndpoint, data);
+      final response = await _api.postRequest(
+          ApiConstants.registerEndpoint, request.toJson());
+      final responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        return responseData;
+      if (responseData["success"] == true) {
+        final transformedJson = Map<String, dynamic>.from(responseData)
+          ..addAll({
+            'accessToken': responseData['data']['accessToken'],
+            'refreshToken': responseData['data']['refreshToken'],
+            'user': responseData['data']['user'],
+          });
+        final loginResponse = LoginResponse.fromJson(transformedJson);
+
+        // Store tokens & user securely
+        await SecureStorage.saveTokens(
+            loginResponse.accessToken!, loginResponse.refreshToken!);
+        await SecureStorage.saveUser(loginResponse.user!);
+
+        return loginResponse;
       } else {
-        final responseBody = jsonDecode(response.body);
-        throw Exception(
-            responseBody["message"] ?? "Register failed. Please try again.");
+        throw Exception(responseData["message"] ??
+            "Registration failed. Please try again.");
       }
     } catch (e) {
       debugPrint("Register Error: $e");
-      rethrow;
+      return null;
     }
+  }
+
+  // Get current user
+  Future<User?> getCurrentUser() async {
+    final userJson = await SecureStorage.getUser();
+
+    if (userJson != null) {
+      return User.fromJson(jsonDecode(userJson));
+    }
+    return null;
   }
 }
