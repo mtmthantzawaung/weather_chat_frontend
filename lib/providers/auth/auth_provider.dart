@@ -49,6 +49,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> register(
       String email, String password, String username, int age) async {
+    // Set loading to true when starting the registration process
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
     try {
       final request = RegisterRequest(
         email: email,
@@ -57,15 +60,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
         age: age,
       );
       final response = await _authService.register(request);
+
       if (response != null) {
-        state = state.copyWith(user: response.user, isLoading: false);
+        // Update the state with the registered user and stop loading
+        state = state.copyWith(isLoading: false);
         logger.f("✅ Registration Successful: ${response.message}");
       } else {
         logger.e("❌ Registration Failed");
+        // Set the error message and stop loading
         state = state.copyWith(
             errorMessage: "Registration failed.", isLoading: false);
       }
     } catch (e) {
+      // Handle any errors, set the error message, and stop loading
       state = state.copyWith(
           errorMessage: "An error occurred. Try again.", isLoading: false);
       logger.e('❌ Register error: $e');

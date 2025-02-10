@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:weather_chat_frontend/presentations/auth/home.dart';
 import 'package:weather_chat_frontend/presentations/auth/login_page.dart';
 import 'package:weather_chat_frontend/presentations/users/users_page.dart';
 import 'package:weather_chat_frontend/providers/auth/auth_provider.dart';
@@ -13,7 +14,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: authState.user == null ? LoginScreen() : HomeScreen(),
+      home: authState.user == null ? Welcome() : HomeScreen(),
     );
   }
 }

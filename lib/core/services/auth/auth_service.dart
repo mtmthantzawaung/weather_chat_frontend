@@ -61,11 +61,6 @@ class AuthService {
           });
         final loginResponse = LoginResponse.fromJson(transformedJson);
 
-        // Store tokens & user securely
-        await SecureStorage.saveTokens(
-            loginResponse.accessToken!, loginResponse.refreshToken!);
-        await SecureStorage.saveUser(loginResponse.user!);
-
         return loginResponse;
       } else {
         throw Exception(responseData["message"] ??
