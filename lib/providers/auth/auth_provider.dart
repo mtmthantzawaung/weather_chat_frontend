@@ -5,6 +5,7 @@ import 'package:weather_chat_frontend/core/services/auth/auth_service.dart';
 import 'package:weather_chat_frontend/core/storage/secure_storage.dart';
 import 'package:weather_chat_frontend/models/request/login/login_request.dart';
 import 'package:weather_chat_frontend/models/request/register/register_request.dart';
+import 'package:weather_chat_frontend/models/user/User.dart';
 import 'package:weather_chat_frontend/providers/auth/auth_state.dart';
 
 final authServiceProvider = Provider<AuthService>(
@@ -31,14 +32,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final request = LoginRequest(email: email, password: password);
       final response = await _authService.login(request);
+      if (response == null) throw ("Login failed.");
 
-      if (response != null) {
-        state = state.copyWith(user: response.user, isLoading: false);
+      if (response.success) {
+        final user = User.fromJson(response.data["user"]);
+        state = state.copyWith(user: user, isLoading: false);
         logger.f("✅ Login Successful: ${response.message}");
       } else {
-        logger.e("❌ Login Failed : ${response}");
-        state = state.copyWith(
-            errorMessage: "Invalid credentials.", isLoading: false);
+        logger.e("❌ Login Failed : ${response.message}");
+        state =
+            state.copyWith(errorMessage: response.message, isLoading: false);
       }
     } catch (e) {
       state = state.copyWith(
@@ -60,16 +63,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
         age: age,
       );
       final response = await _authService.register(request);
+      if (response == null) throw ("Login failed.");
 
-      if (response != null) {
+      if (response.success) {
         // Update the state with the registered user and stop loading
         state = state.copyWith(isLoading: false);
         logger.f("✅ Registration Successful: ${response.message}");
       } else {
         logger.e("❌ Registration Failed");
         // Set the error message and stop loading
-        state = state.copyWith(
-            errorMessage: "Registration failed.", isLoading: false);
+        state =
+            state.copyWith(errorMessage: response.message, isLoading: false);
       }
     } catch (e) {
       // Handle any errors, set the error message, and stop loading

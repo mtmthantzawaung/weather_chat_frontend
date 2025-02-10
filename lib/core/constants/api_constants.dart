@@ -8,4 +8,7 @@ class ApiConstants {
 
   // User
   static const String getAllUserEndpoint = "/users";
+
+  // Weather
+  static const String weatherByCityEndPoint = "/auth/weather?city=";
 }
