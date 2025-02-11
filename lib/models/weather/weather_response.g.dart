@@ -69,26 +69,26 @@ _$TemperatureDataImpl _$$TemperatureDataImplFromJson(
         Map<String, dynamic> json) =>
     _$TemperatureDataImpl(
       temp: (json['temp'] as num).toDouble(),
-      feelsLike: (json['feelsLike'] as num).toDouble(),
-      tempMin: (json['tempMin'] as num).toDouble(),
-      tempMax: (json['tempMax'] as num).toDouble(),
+      feelsLike: (json['feels_like'] as num).toDouble(),
+      tempMin: (json['temp_min'] as num).toDouble(),
+      tempMax: (json['temp_max'] as num).toDouble(),
       pressure: (json['pressure'] as num).toInt(),
       humidity: (json['humidity'] as num).toInt(),
-      seaLevel: (json['seaLevel'] as num).toInt(),
-      grndLevel: (json['grndLevel'] as num).toInt(),
+      seaLevel: (json['sea_level'] as num?)?.toInt(),
+      grndLevel: (json['grnd_level'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$TemperatureDataImplToJson(
         _$TemperatureDataImpl instance) =>
     <String, dynamic>{
       'temp': instance.temp,
-      'feelsLike': instance.feelsLike,
-      'tempMin': instance.tempMin,
-      'tempMax': instance.tempMax,
+      'feels_like': instance.feelsLike,
+      'temp_min': instance.tempMin,
+      'temp_max': instance.tempMax,
       'pressure': instance.pressure,
       'humidity': instance.humidity,
-      'seaLevel': instance.seaLevel,
-      'grndLevel': instance.grndLevel,
+      'sea_level': instance.seaLevel,
+      'grnd_level': instance.grndLevel,
     };
 
 _$SunInfoImpl _$$SunInfoImplFromJson(Map<String, dynamic> json) =>

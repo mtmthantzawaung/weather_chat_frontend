@@ -16,8 +16,6 @@ class WeatherService {
     final apiResponse = ApiResponse.fromJson(response);
 
     if (response["success"] == true) {
-      final accessToken = WeatherResponse.fromJson(apiResponse.data);
-
       return apiResponse;
     } else {
       logger.e("Get Weather failed. Please try again.");

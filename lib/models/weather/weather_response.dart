@@ -56,13 +56,13 @@ class Coordinates with _$Coordinates {
 class TemperatureData with _$TemperatureData {
   const factory TemperatureData({
     required double temp,
-    required double feelsLike,
-    required double tempMin,
-    required double tempMax,
+    @JsonKey(name: "feels_like") required double feelsLike,
+    @JsonKey(name: "temp_min") required double tempMin,
+    @JsonKey(name: "temp_max") required double tempMax,
     required int pressure,
     required int humidity,
-    required int seaLevel,
-    required int grndLevel,
+    @JsonKey(name: "sea_level") int? seaLevel,
+    @JsonKey(name: "grnd_level") int? grndLevel,
   }) = _TemperatureData;
 
   factory TemperatureData.fromJson(Map<String, dynamic> json) =>

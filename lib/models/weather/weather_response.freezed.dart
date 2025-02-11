@@ -817,13 +817,18 @@ TemperatureData _$TemperatureDataFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$TemperatureData {
   double get temp => throw _privateConstructorUsedError;
+  @JsonKey(name: "feels_like")
   double get feelsLike => throw _privateConstructorUsedError;
+  @JsonKey(name: "temp_min")
   double get tempMin => throw _privateConstructorUsedError;
+  @JsonKey(name: "temp_max")
   double get tempMax => throw _privateConstructorUsedError;
   int get pressure => throw _privateConstructorUsedError;
   int get humidity => throw _privateConstructorUsedError;
-  int get seaLevel => throw _privateConstructorUsedError;
-  int get grndLevel => throw _privateConstructorUsedError;
+  @JsonKey(name: "sea_level")
+  int? get seaLevel => throw _privateConstructorUsedError;
+  @JsonKey(name: "grnd_level")
+  int? get grndLevel => throw _privateConstructorUsedError;
 
   /// Serializes this TemperatureData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -843,13 +848,13 @@ abstract class $TemperatureDataCopyWith<$Res> {
   @useResult
   $Res call(
       {double temp,
-      double feelsLike,
-      double tempMin,
-      double tempMax,
+      @JsonKey(name: "feels_like") double feelsLike,
+      @JsonKey(name: "temp_min") double tempMin,
+      @JsonKey(name: "temp_max") double tempMax,
       int pressure,
       int humidity,
-      int seaLevel,
-      int grndLevel});
+      @JsonKey(name: "sea_level") int? seaLevel,
+      @JsonKey(name: "grnd_level") int? grndLevel});
 }
 
 /// @nodoc
@@ -873,8 +878,8 @@ class _$TemperatureDataCopyWithImpl<$Res, $Val extends TemperatureData>
     Object? tempMax = null,
     Object? pressure = null,
     Object? humidity = null,
-    Object? seaLevel = null,
-    Object? grndLevel = null,
+    Object? seaLevel = freezed,
+    Object? grndLevel = freezed,
   }) {
     return _then(_value.copyWith(
       temp: null == temp
@@ -901,14 +906,14 @@ class _$TemperatureDataCopyWithImpl<$Res, $Val extends TemperatureData>
           ? _value.humidity
           : humidity // ignore: cast_nullable_to_non_nullable
               as int,
-      seaLevel: null == seaLevel
+      seaLevel: freezed == seaLevel
           ? _value.seaLevel
           : seaLevel // ignore: cast_nullable_to_non_nullable
-              as int,
-      grndLevel: null == grndLevel
+              as int?,
+      grndLevel: freezed == grndLevel
           ? _value.grndLevel
           : grndLevel // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ) as $Val);
   }
 }
@@ -923,13 +928,13 @@ abstract class _$$TemperatureDataImplCopyWith<$Res>
   @useResult
   $Res call(
       {double temp,
-      double feelsLike,
-      double tempMin,
-      double tempMax,
+      @JsonKey(name: "feels_like") double feelsLike,
+      @JsonKey(name: "temp_min") double tempMin,
+      @JsonKey(name: "temp_max") double tempMax,
       int pressure,
       int humidity,
-      int seaLevel,
-      int grndLevel});
+      @JsonKey(name: "sea_level") int? seaLevel,
+      @JsonKey(name: "grnd_level") int? grndLevel});
 }
 
 /// @nodoc
@@ -951,8 +956,8 @@ class __$$TemperatureDataImplCopyWithImpl<$Res>
     Object? tempMax = null,
     Object? pressure = null,
     Object? humidity = null,
-    Object? seaLevel = null,
-    Object? grndLevel = null,
+    Object? seaLevel = freezed,
+    Object? grndLevel = freezed,
   }) {
     return _then(_$TemperatureDataImpl(
       temp: null == temp
@@ -979,14 +984,14 @@ class __$$TemperatureDataImplCopyWithImpl<$Res>
           ? _value.humidity
           : humidity // ignore: cast_nullable_to_non_nullable
               as int,
-      seaLevel: null == seaLevel
+      seaLevel: freezed == seaLevel
           ? _value.seaLevel
           : seaLevel // ignore: cast_nullable_to_non_nullable
-              as int,
-      grndLevel: null == grndLevel
+              as int?,
+      grndLevel: freezed == grndLevel
           ? _value.grndLevel
           : grndLevel // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }
@@ -996,13 +1001,13 @@ class __$$TemperatureDataImplCopyWithImpl<$Res>
 class _$TemperatureDataImpl implements _TemperatureData {
   const _$TemperatureDataImpl(
       {required this.temp,
-      required this.feelsLike,
-      required this.tempMin,
-      required this.tempMax,
+      @JsonKey(name: "feels_like") required this.feelsLike,
+      @JsonKey(name: "temp_min") required this.tempMin,
+      @JsonKey(name: "temp_max") required this.tempMax,
       required this.pressure,
       required this.humidity,
-      required this.seaLevel,
-      required this.grndLevel});
+      @JsonKey(name: "sea_level") this.seaLevel,
+      @JsonKey(name: "grnd_level") this.grndLevel});
 
   factory _$TemperatureDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$TemperatureDataImplFromJson(json);
@@ -1010,19 +1015,24 @@ class _$TemperatureDataImpl implements _TemperatureData {
   @override
   final double temp;
   @override
+  @JsonKey(name: "feels_like")
   final double feelsLike;
   @override
+  @JsonKey(name: "temp_min")
   final double tempMin;
   @override
+  @JsonKey(name: "temp_max")
   final double tempMax;
   @override
   final int pressure;
   @override
   final int humidity;
   @override
-  final int seaLevel;
+  @JsonKey(name: "sea_level")
+  final int? seaLevel;
   @override
-  final int grndLevel;
+  @JsonKey(name: "grnd_level")
+  final int? grndLevel;
 
   @override
   String toString() {
@@ -1073,14 +1083,15 @@ class _$TemperatureDataImpl implements _TemperatureData {
 
 abstract class _TemperatureData implements TemperatureData {
   const factory _TemperatureData(
-      {required final double temp,
-      required final double feelsLike,
-      required final double tempMin,
-      required final double tempMax,
-      required final int pressure,
-      required final int humidity,
-      required final int seaLevel,
-      required final int grndLevel}) = _$TemperatureDataImpl;
+          {required final double temp,
+          @JsonKey(name: "feels_like") required final double feelsLike,
+          @JsonKey(name: "temp_min") required final double tempMin,
+          @JsonKey(name: "temp_max") required final double tempMax,
+          required final int pressure,
+          required final int humidity,
+          @JsonKey(name: "sea_level") final int? seaLevel,
+          @JsonKey(name: "grnd_level") final int? grndLevel}) =
+      _$TemperatureDataImpl;
 
   factory _TemperatureData.fromJson(Map<String, dynamic> json) =
       _$TemperatureDataImpl.fromJson;
@@ -1088,19 +1099,24 @@ abstract class _TemperatureData implements TemperatureData {
   @override
   double get temp;
   @override
+  @JsonKey(name: "feels_like")
   double get feelsLike;
   @override
+  @JsonKey(name: "temp_min")
   double get tempMin;
   @override
+  @JsonKey(name: "temp_max")
   double get tempMax;
   @override
   int get pressure;
   @override
   int get humidity;
   @override
-  int get seaLevel;
+  @JsonKey(name: "sea_level")
+  int? get seaLevel;
   @override
-  int get grndLevel;
+  @JsonKey(name: "grnd_level")
+  int? get grndLevel;
 
   /// Create a copy of TemperatureData
   /// with the given fields replaced by the non-null parameter values.
