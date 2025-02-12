@@ -18,7 +18,7 @@ _$WeatherResponseImpl _$$WeatherResponseImplFromJson(
       visibility: (json['visibility'] as num).toInt(),
       wind: Wind.fromJson(json['wind'] as Map<String, dynamic>),
       clouds: Clouds.fromJson(json['clouds'] as Map<String, dynamic>),
-      dt: (json['dt'] as num).toInt(),
+      dt: const UnixTimestampConverter().fromJson((json['dt'] as num).toInt()),
       sys: SunInfo.fromJson(json['sys'] as Map<String, dynamic>),
       timezone: (json['timezone'] as num).toInt(),
       id: (json['id'] as num).toInt(),
@@ -36,7 +36,7 @@ Map<String, dynamic> _$$WeatherResponseImplToJson(
       'visibility': instance.visibility,
       'wind': instance.wind,
       'clouds': instance.clouds,
-      'dt': instance.dt,
+      'dt': const UnixTimestampConverter().toJson(instance.dt),
       'sys': instance.sys,
       'timezone': instance.timezone,
       'id': instance.id,
@@ -94,15 +94,17 @@ Map<String, dynamic> _$$TemperatureDataImplToJson(
 _$SunInfoImpl _$$SunInfoImplFromJson(Map<String, dynamic> json) =>
     _$SunInfoImpl(
       country: json['country'] as String,
-      sunrise: (json['sunrise'] as num).toInt(),
-      sunset: (json['sunset'] as num).toInt(),
+      sunrise: const UnixTimestampConverter()
+          .fromJson((json['sunrise'] as num).toInt()),
+      sunset: const UnixTimestampConverter()
+          .fromJson((json['sunset'] as num).toInt()),
     );
 
 Map<String, dynamic> _$$SunInfoImplToJson(_$SunInfoImpl instance) =>
     <String, dynamic>{
       'country': instance.country,
-      'sunrise': instance.sunrise,
-      'sunset': instance.sunset,
+      'sunrise': const UnixTimestampConverter().toJson(instance.sunrise),
+      'sunset': const UnixTimestampConverter().toJson(instance.sunset),
     };
 
 _$WeatherConditionImpl _$$WeatherConditionImplFromJson(

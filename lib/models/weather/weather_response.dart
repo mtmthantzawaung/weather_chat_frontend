@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 
+import 'package:weather_chat_frontend/utils/converters/unix_timestamp_converter.dart';
+
 part 'weather_response.freezed.dart';
 part 'weather_response.g.dart';
 
@@ -20,7 +22,7 @@ class WeatherResponse with _$WeatherResponse {
     required int visibility,
     required Wind wind,
     required Clouds clouds,
-    required int dt,
+    @UnixTimestampConverter() required DateTime dt,
     required SunInfo sys,
     required int timezone,
     required int id,
@@ -73,8 +75,8 @@ class TemperatureData with _$TemperatureData {
 class SunInfo with _$SunInfo {
   const factory SunInfo({
     required String country,
-    required int sunrise,
-    required int sunset,
+    @UnixTimestampConverter() required DateTime sunrise,
+    @UnixTimestampConverter() required DateTime sunset,
   }) = _SunInfo;
 
   factory SunInfo.fromJson(Map<String, dynamic> json) =>

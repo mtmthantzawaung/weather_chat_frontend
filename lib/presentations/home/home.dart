@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:weather_chat_frontend/providers/auth/auth_provider.dart';
 import 'package:weather_chat_frontend/providers/current_tab/current_tab.dart';
 import 'package:weather_chat_frontend/utils/enums/bottom_tab.dart';
 
@@ -67,7 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print("FAB Pressed!");
+            ref.watch(authStateProvider.notifier).logout();
           },
           backgroundColor: Colors.blue,
           elevation: 6,

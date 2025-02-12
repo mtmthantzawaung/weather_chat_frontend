@@ -27,7 +27,7 @@ final weatherStateProvider =
 class WeatherNotifier extends StateNotifier<WeatherState> {
   final WeatherService _weatherService;
   WeatherNotifier(this._weatherService) : super(WeatherState()) {
-    _loadWeather();
+    // _loadWeather();
   }
 
   Future<void> _loadWeather() async {

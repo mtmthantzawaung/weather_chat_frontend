@@ -27,7 +27,8 @@ mixin _$WeatherResponse {
   int get visibility => throw _privateConstructorUsedError;
   Wind get wind => throw _privateConstructorUsedError;
   Clouds get clouds => throw _privateConstructorUsedError;
-  int get dt => throw _privateConstructorUsedError;
+  @UnixTimestampConverter()
+  DateTime get dt => throw _privateConstructorUsedError;
   SunInfo get sys => throw _privateConstructorUsedError;
   int get timezone => throw _privateConstructorUsedError;
   int get id => throw _privateConstructorUsedError;
@@ -58,7 +59,7 @@ abstract class $WeatherResponseCopyWith<$Res> {
       int visibility,
       Wind wind,
       Clouds clouds,
-      int dt,
+      @UnixTimestampConverter() DateTime dt,
       SunInfo sys,
       int timezone,
       int id,
@@ -133,7 +134,7 @@ class _$WeatherResponseCopyWithImpl<$Res, $Val extends WeatherResponse>
       dt: null == dt
           ? _value.dt
           : dt // ignore: cast_nullable_to_non_nullable
-              as int,
+              as DateTime,
       sys: null == sys
           ? _value.sys
           : sys // ignore: cast_nullable_to_non_nullable
@@ -224,7 +225,7 @@ abstract class _$$WeatherResponseImplCopyWith<$Res>
       int visibility,
       Wind wind,
       Clouds clouds,
-      int dt,
+      @UnixTimestampConverter() DateTime dt,
       SunInfo sys,
       int timezone,
       int id,
@@ -302,7 +303,7 @@ class __$$WeatherResponseImplCopyWithImpl<$Res>
       dt: null == dt
           ? _value.dt
           : dt // ignore: cast_nullable_to_non_nullable
-              as int,
+              as DateTime,
       sys: null == sys
           ? _value.sys
           : sys // ignore: cast_nullable_to_non_nullable
@@ -338,7 +339,7 @@ class _$WeatherResponseImpl implements _WeatherResponse {
       required this.visibility,
       required this.wind,
       required this.clouds,
-      required this.dt,
+      @UnixTimestampConverter() required this.dt,
       required this.sys,
       required this.timezone,
       required this.id,
@@ -370,7 +371,8 @@ class _$WeatherResponseImpl implements _WeatherResponse {
   @override
   final Clouds clouds;
   @override
-  final int dt;
+  @UnixTimestampConverter()
+  final DateTime dt;
   @override
   final SunInfo sys;
   @override
@@ -453,7 +455,7 @@ abstract class _WeatherResponse implements WeatherResponse {
       required final int visibility,
       required final Wind wind,
       required final Clouds clouds,
-      required final int dt,
+      @UnixTimestampConverter() required final DateTime dt,
       required final SunInfo sys,
       required final int timezone,
       required final int id,
@@ -478,7 +480,8 @@ abstract class _WeatherResponse implements WeatherResponse {
   @override
   Clouds get clouds;
   @override
-  int get dt;
+  @UnixTimestampConverter()
+  DateTime get dt;
   @override
   SunInfo get sys;
   @override
@@ -1133,8 +1136,10 @@ SunInfo _$SunInfoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$SunInfo {
   String get country => throw _privateConstructorUsedError;
-  int get sunrise => throw _privateConstructorUsedError;
-  int get sunset => throw _privateConstructorUsedError;
+  @UnixTimestampConverter()
+  DateTime get sunrise => throw _privateConstructorUsedError;
+  @UnixTimestampConverter()
+  DateTime get sunset => throw _privateConstructorUsedError;
 
   /// Serializes this SunInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1150,7 +1155,10 @@ abstract class $SunInfoCopyWith<$Res> {
   factory $SunInfoCopyWith(SunInfo value, $Res Function(SunInfo) then) =
       _$SunInfoCopyWithImpl<$Res, SunInfo>;
   @useResult
-  $Res call({String country, int sunrise, int sunset});
+  $Res call(
+      {String country,
+      @UnixTimestampConverter() DateTime sunrise,
+      @UnixTimestampConverter() DateTime sunset});
 }
 
 /// @nodoc
@@ -1180,11 +1188,11 @@ class _$SunInfoCopyWithImpl<$Res, $Val extends SunInfo>
       sunrise: null == sunrise
           ? _value.sunrise
           : sunrise // ignore: cast_nullable_to_non_nullable
-              as int,
+              as DateTime,
       sunset: null == sunset
           ? _value.sunset
           : sunset // ignore: cast_nullable_to_non_nullable
-              as int,
+              as DateTime,
     ) as $Val);
   }
 }
@@ -1196,7 +1204,10 @@ abstract class _$$SunInfoImplCopyWith<$Res> implements $SunInfoCopyWith<$Res> {
       __$$SunInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String country, int sunrise, int sunset});
+  $Res call(
+      {String country,
+      @UnixTimestampConverter() DateTime sunrise,
+      @UnixTimestampConverter() DateTime sunset});
 }
 
 /// @nodoc
@@ -1224,11 +1235,11 @@ class __$$SunInfoImplCopyWithImpl<$Res>
       sunrise: null == sunrise
           ? _value.sunrise
           : sunrise // ignore: cast_nullable_to_non_nullable
-              as int,
+              as DateTime,
       sunset: null == sunset
           ? _value.sunset
           : sunset // ignore: cast_nullable_to_non_nullable
-              as int,
+              as DateTime,
     ));
   }
 }
@@ -1237,7 +1248,9 @@ class __$$SunInfoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SunInfoImpl implements _SunInfo {
   const _$SunInfoImpl(
-      {required this.country, required this.sunrise, required this.sunset});
+      {required this.country,
+      @UnixTimestampConverter() required this.sunrise,
+      @UnixTimestampConverter() required this.sunset});
 
   factory _$SunInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$SunInfoImplFromJson(json);
@@ -1245,9 +1258,11 @@ class _$SunInfoImpl implements _SunInfo {
   @override
   final String country;
   @override
-  final int sunrise;
+  @UnixTimestampConverter()
+  final DateTime sunrise;
   @override
-  final int sunset;
+  @UnixTimestampConverter()
+  final DateTime sunset;
 
   @override
   String toString() {
@@ -1286,18 +1301,21 @@ class _$SunInfoImpl implements _SunInfo {
 
 abstract class _SunInfo implements SunInfo {
   const factory _SunInfo(
-      {required final String country,
-      required final int sunrise,
-      required final int sunset}) = _$SunInfoImpl;
+          {required final String country,
+          @UnixTimestampConverter() required final DateTime sunrise,
+          @UnixTimestampConverter() required final DateTime sunset}) =
+      _$SunInfoImpl;
 
   factory _SunInfo.fromJson(Map<String, dynamic> json) = _$SunInfoImpl.fromJson;
 
   @override
   String get country;
   @override
-  int get sunrise;
+  @UnixTimestampConverter()
+  DateTime get sunrise;
   @override
-  int get sunset;
+  @UnixTimestampConverter()
+  DateTime get sunset;
 
   /// Create a copy of SunInfo
   /// with the given fields replaced by the non-null parameter values.

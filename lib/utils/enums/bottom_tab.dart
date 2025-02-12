@@ -38,7 +38,7 @@ extension TabItemEx on TabItem {
       case TabItem.user:
         return Icons.account_circle_outlined;
       case TabItem.chat:
-        return Icons.account_circle_outlined;
+        return Icons.chat;
       case TabItem.setting:
         return Icons.account_circle_outlined;
     }

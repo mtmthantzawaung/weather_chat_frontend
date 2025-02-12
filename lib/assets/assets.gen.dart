@@ -9,6 +9,78 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  /// File path: assets/images/cloudy.json
+  String get cloudyJson => 'assets/images/cloudy.json';
+
+  /// File path: assets/images/cloudy.png
+  AssetGenImage get cloudyPng =>
+      const AssetGenImage('assets/images/cloudy.png');
+
+  /// File path: assets/images/cloudy_icon.png
+  AssetGenImage get cloudyIcon =>
+      const AssetGenImage('assets/images/cloudy_icon.png');
+
+  /// File path: assets/images/cloudy_rainny.png
+  AssetGenImage get cloudyRainny =>
+      const AssetGenImage('assets/images/cloudy_rainny.png');
+
+  /// File path: assets/images/cold.png
+  AssetGenImage get cold => const AssetGenImage('assets/images/cold.png');
+
+  /// File path: assets/images/hot.png
+  AssetGenImage get hot => const AssetGenImage('assets/images/hot.png');
+
+  /// File path: assets/images/messenger.png
+  AssetGenImage get messenger =>
+      const AssetGenImage('assets/images/messenger.png');
+
+  /// File path: assets/images/moon.png
+  AssetGenImage get moon => const AssetGenImage('assets/images/moon.png');
+
+  /// File path: assets/images/rainny.json
+  String get rainny => 'assets/images/rainny.json';
+
+  /// File path: assets/images/snow.json
+  String get snow => 'assets/images/snow.json';
+
+  /// File path: assets/images/sun.png
+  AssetGenImage get sun => const AssetGenImage('assets/images/sun.png');
+
+  /// File path: assets/images/sunny.json
+  String get sunny => 'assets/images/sunny.json';
+
+  /// File path: assets/images/thundar.json
+  String get thundar => 'assets/images/thundar.json';
+
+  /// File path: assets/images/thundar_rainny.json
+  String get thundarRainny => 'assets/images/thundar_rainny.json';
+
+  /// File path: assets/images/windy.json
+  String get windy => 'assets/images/windy.json';
+
+  /// List of all assets
+  List<dynamic> get values => [
+    cloudyJson,
+    cloudyPng,
+    cloudyIcon,
+    cloudyRainny,
+    cold,
+    hot,
+    messenger,
+    moon,
+    rainny,
+    snow,
+    sun,
+    sunny,
+    thundar,
+    thundarRainny,
+    windy,
+  ];
+}
+
 class $AssetsLogosGen {
   const $AssetsLogosGen();
 
@@ -65,6 +137,7 @@ class $AssetsLogosGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLogosGen logos = $AssetsLogosGen();
 }
 
