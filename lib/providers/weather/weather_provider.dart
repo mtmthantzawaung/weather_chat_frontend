@@ -5,6 +5,7 @@ import 'package:weather_chat_frontend/app/logger.dart';
 import 'package:weather_chat_frontend/core/services/api_service.dart';
 import 'package:weather_chat_frontend/core/services/weather/weather_service.dart';
 import 'package:weather_chat_frontend/models/api/api_response.dart';
+import 'package:weather_chat_frontend/models/hourly_weather.dart/hourly_weather.dart';
 import 'package:weather_chat_frontend/models/weekly_weather/weekly_weather.dart';
 import 'package:weather_chat_frontend/models/weather/weather_response.dart';
 import 'package:weather_chat_frontend/providers/weather/weather_state.dart';
@@ -88,8 +89,34 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
   // }
 }
 
-final hourlyWeatherProvider =
+// Weekly Weather
+final weeklyWeatherProvider =
     FutureProvider.autoDispose.family<WeeklyWeather?, Position>(
+  (ref, Position position) async {
+    try {
+      final weatherservice = WeatherService(ApiService());
+      final response = await weatherservice.getWeeklyWeather(
+          position.latitude.toString(), position.longitude.toString());
+      if (response == null) throw ("Get Weekly Weather failed.");
+
+      if (response.success) {
+        final weatherResponse = WeeklyWeather.fromJson(response.data);
+        logger.f("✅ Get Weekly Weather Successful: ${response.message}");
+        return weatherResponse;
+      } else {
+        logger.e("❌ Get Weather Failed : ${response.message}");
+        return null;
+      }
+    } on Exception catch (e) {
+      logger.e('❌ Get Weekly Weather error: $e');
+      return null;
+    }
+  },
+);
+
+// Hourly Weather
+final hourlyWeatherProvider =
+    FutureProvider.autoDispose.family<HourlyWeather?, Position>(
   (ref, Position position) async {
     try {
       final weatherservice = WeatherService(ApiService());
@@ -98,7 +125,7 @@ final hourlyWeatherProvider =
       if (response == null) throw ("Get Hourly Weather failed.");
 
       if (response.success) {
-        final weatherResponse = WeeklyWeather.fromJson(response.data);
+        final weatherResponse = HourlyWeather.fromJson(response.data);
         logger.f("✅ Get Hourly Weather Successful: ${response.message}");
         return weatherResponse;
       } else {

@@ -7,6 +7,7 @@ class InputField extends StatefulWidget {
   final bool isNumberOnly;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
 
   const InputField({
     required this.label,
@@ -15,6 +16,7 @@ class InputField extends StatefulWidget {
     required this.controller,
     this.validator,
     super.key,
+    this.focusNode,
   });
 
   @override
@@ -47,6 +49,7 @@ class InputFieldState extends State<InputField> {
           controller: widget.controller,
           obscureText: _isObscured,
           validator: widget.validator,
+          focusNode: widget.focusNode,
           keyboardType:
               widget.isNumberOnly ? TextInputType.number : TextInputType.text,
           inputFormatters: widget.isNumberOnly

@@ -22,7 +22,21 @@ class WeatherService {
     }
   }
 
-  // Get Weather By City
+  // Get weekly Weather By City
+  Future<ApiResponse?> getWeeklyWeather(String lat, String long) async {
+    final response = await _api
+        .getRequest("${ApiConstants.weeklyWeatherEndPoint}lat=$lat&long=$long");
+    final apiResponse = ApiResponse.fromJson(response);
+
+    if (response["success"] == true) {
+      return apiResponse;
+    } else {
+      logger.e("Get Weekly Weather failed. Please try again.");
+      return apiResponse;
+    }
+  }
+
+  // Get hourly Weather By City
   Future<ApiResponse?> getHourlyWeather(String lat, String long) async {
     final response = await _api
         .getRequest("${ApiConstants.hourlyWeatherEndPoint}lat=$lat&long=$long");

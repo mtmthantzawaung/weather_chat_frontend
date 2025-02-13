@@ -7,9 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:weather_chat_frontend/app/logger.dart';
 import 'package:weather_chat_frontend/assets/assets.gen.dart';
-import 'package:weather_chat_frontend/models/weekly_weather/weekly_weather.dart';
+import 'package:weather_chat_frontend/models/hourly_weather.dart/hourly_weather.dart';
 import 'package:weather_chat_frontend/presentations/weather/widgets/hourly_forecast.dart';
-import 'package:weather_chat_frontend/providers/auth/auth_provider.dart';
+import 'package:weather_chat_frontend/presentations/weather/widgets/search_page.dart';
 import 'package:weather_chat_frontend/providers/weather/weather_provider.dart';
 import 'package:weather_chat_frontend/utils/helpers/helper_function.dart';
 
@@ -21,8 +21,8 @@ class Weather extends StatefulHookConsumerWidget {
 }
 
 class _WeatherState extends ConsumerState<Weather> {
-  late final hourlyWeather;
-  late final position;
+  late HourlyWeather hourlyWeather;
+  late Position position;
 
   @override
   void initState() {
@@ -30,19 +30,42 @@ class _WeatherState extends ConsumerState<Weather> {
     _loadWeather();
   }
 
-  _loadWeather() async {
-    position = await HelperFunction.getCurrentLocation();
-    final userCity = await HelperFunction.getCityFromCoordinates(
-        position.latitude, position.longitude);
-    if (userCity != null) {
-      await ref.watch(weatherStateProvider.notifier).getWeatherByCity(userCity);
+  Future<void> _loadWeather({String? selectedCity}) async {
+    try {
+      if (selectedCity != null) {
+        await ref
+            .read(weatherStateProvider.notifier)
+            .getWeatherByCity(selectedCity);
+      } else {
+        position = await HelperFunction.getCurrentLocation();
+        if (position != null) {
+          final userCity = await HelperFunction.getCityFromCoordinates(
+              position!.latitude, position!.longitude);
+          if (userCity != null) {
+            await ref
+                .read(weatherStateProvider.notifier)
+                .getWeatherByCity(userCity);
+          }
+        }
+      }
+    } catch (e) {
+      logger.e("Failed to load weather: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Failed to load weather data"),
+          action: SnackBarAction(
+            label: "Retry",
+            onPressed: _loadWeather,
+          ),
+        ),
+      );
     }
   }
 
   String _getWeatherAnimation(String? mainCondition) {
     if (mainCondition == null) return Assets.images.sunny;
 
-    switch (mainCondition) {
+    switch (mainCondition.toLowerCase()) {
       case 'clouds':
       case 'mist':
       case 'smoke':
@@ -68,8 +91,45 @@ class _WeatherState extends ConsumerState<Weather> {
     final weatherState = ref.watch(weatherStateProvider);
     final weatherResponse = weatherState.weatherResponse;
 
-    if (weatherResponse == null) {
-      return Center(child: CircularProgressIndicator());
+    if (weatherState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (weatherState.errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Failed to load weather data",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+              ),
+            ),
+            Text(
+              weatherState.errorMessage!,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _loadWeather,
+              child: Text("Retry"),
+            ),
+          ],
+        ),
+      );
+    } else if (weatherResponse == null) {
+      return Center(
+        child: Text(
+          "No weather data available",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+          ),
+        ),
+      );
     }
 
     return Scaffold(
@@ -83,14 +143,28 @@ class _WeatherState extends ConsumerState<Weather> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Image.asset(
+              'assets/images/search.png',
+              width: 25,
+            ),
             onPressed: () async {
-              Navigator.pushReplacement(
+              final result = await Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(),
-                ),
+                MaterialPageRoute(builder: (context) => SearchPage()),
               );
+
+              if (result != null) {
+                final selectedCity = result['city']; // City name
+                final selectedPosition =
+                    result['position']; // Latitude & Longitude
+
+                if (selectedCity != null && selectedPosition != null) {
+                  setState(() {
+                    position = selectedPosition; // Update the position state
+                  });
+                  await _loadWeather(selectedCity: selectedCity);
+                }
+              }
             },
           ),
         ],
@@ -162,7 +236,7 @@ class _WeatherState extends ConsumerState<Weather> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    weatherResponse.name ?? '',
+                    weatherResponse.name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -249,7 +323,6 @@ class _WeatherState extends ConsumerState<Weather> {
                   SizedBox(height: 20),
 
                   // Hourly Forecast
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
