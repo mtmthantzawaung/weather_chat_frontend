@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:weather_chat_frontend/app/logger.dart';
 import 'package:weather_chat_frontend/assets/assets.gen.dart';
+import 'package:weather_chat_frontend/models/weekly_weather/weekly_weather.dart';
+import 'package:weather_chat_frontend/presentations/weather/widgets/hourly_forecast.dart';
 import 'package:weather_chat_frontend/providers/auth/auth_provider.dart';
 import 'package:weather_chat_frontend/providers/weather/weather_provider.dart';
 import 'package:weather_chat_frontend/utils/helpers/helper_function.dart';
@@ -21,6 +21,9 @@ class Weather extends StatefulHookConsumerWidget {
 }
 
 class _WeatherState extends ConsumerState<Weather> {
+  late final hourlyWeather;
+  late final position;
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +31,7 @@ class _WeatherState extends ConsumerState<Weather> {
   }
 
   _loadWeather() async {
-    Position position = await HelperFunction.getCurrentLocation();
+    position = await HelperFunction.getCurrentLocation();
     final userCity = await HelperFunction.getCityFromCoordinates(
         position.latitude, position.longitude);
     if (userCity != null) {
@@ -64,11 +67,11 @@ class _WeatherState extends ConsumerState<Weather> {
   Widget build(BuildContext context) {
     final weatherState = ref.watch(weatherStateProvider);
     final weatherResponse = weatherState.weatherResponse;
-    logger.f(weatherResponse);
 
     if (weatherResponse == null) {
       return Center(child: CircularProgressIndicator());
     }
+
     return Scaffold(
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
@@ -80,291 +83,232 @@ class _WeatherState extends ConsumerState<Weather> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => ref.watch(authStateProvider.notifier).logout(),
-          )
+            icon: Icon(Icons.search),
+            onPressed: () async {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchPage(),
+                ),
+              );
+            },
+          ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width / 10),
-          child: Stack(
-            children: [
-              Align(
-                alignment: AlignmentDirectional(3, -0.3),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.deepPurple,
+      body: Stack(
+        children: [
+          // Background Decorations
+          Positioned.fill(
+            child: Stack(
+              children: [
+                Align(
+                  alignment: AlignmentDirectional(3, -0.3),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.deepPurple,
+                    ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(-3, -0.3),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.deepPurple,
+                Align(
+                  alignment: AlignmentDirectional(-3, -0.3),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.deepPurple,
+                    ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(0, -1.2),
-                child: Container(
-                  height: 300,
-                  width: 600,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFAB40),
+                Align(
+                  alignment: AlignmentDirectional(0, -1.2),
+                  child: Container(
+                    height: 300,
+                    width: 600,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFFAB40),
+                    ),
                   ),
                 ),
-              ),
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                  ),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                  child: Container(color: Colors.transparent),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 60, left: 5, right: 5, bottom: 10),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+              ],
+            ),
+          ),
+
+          // Scrollable Content
+          SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      height: MediaQuery.of(context).padding.top +
+                          50), // Adjust for AppBar
+                  Text(
+                    'My Location',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 40,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    weatherResponse.name ?? '',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Lottie.asset(_getWeatherAnimation(
+                      "${weatherResponse.weather.first.main}")),
+                  Text(
+                    "${weatherResponse.main.temp.round()}°C",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 75,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    "${weatherResponse.weather.first.main}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    DateFormat('EEEE dd .').add_jm().format(
+                          weatherResponse.dt
+                              .add(Duration(seconds: weatherResponse.timezone)),
+                        ),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Sunrise & Sunset
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'My Location',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 40,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            weatherResponse?.name ?? '',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Lottie.asset(_getWeatherAnimation(
-                              "${weatherResponse?.weather.first.main}")),
-                          Text(
-                            "${weatherResponse?.main.temp.round()}°C",
-                            style: TextStyle(
-                              height: 0,
-                              fontWeight: FontWeight.w300,
-                              fontSize: 75,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "${weatherResponse?.weather.first.main}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            DateFormat('EEEE dd .').add_jm().format(
-                                  weatherResponse.dt.add(
-                                    Duration(seconds: weatherResponse.timezone),
-                                  ),
-                                ), // ✅ Properly closed format function
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/sun.png',
-                                    scale: 8,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Sunries',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        DateFormat('').add_jm().format(
-                                              weatherResponse.sys.sunrise.add(
-                                                Duration(
-                                                    seconds: weatherResponse
-                                                        .timezone),
-                                              ),
-                                            ),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
+                      _buildWeatherDetail(
+                        icon: 'assets/images/sun.png',
+                        title: 'Sunrise',
+                        value: DateFormat('').add_jm().format(
+                              weatherResponse.sys.sunrise.add(
+                                Duration(seconds: weatherResponse.timezone),
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/moon.png',
-                                    scale: 8,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Sunset',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        DateFormat('').add_jm().format(
-                                              weatherResponse.sys.sunset.add(
-                                                Duration(
-                                                    seconds: weatherResponse
-                                                        .timezone),
-                                              ),
-                                            ),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
+                            ),
+                      ),
+                      _buildWeatherDetail(
+                        icon: 'assets/images/moon.png',
+                        title: 'Sunset',
+                        value: DateFormat('').add_jm().format(
+                              weatherResponse.sys.sunset.add(
+                                Duration(seconds: weatherResponse.timezone),
                               ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Divider(color: Colors.grey[700]),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/hot.png',
-                                    scale: 8,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Temp Max',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        "${weatherResponse?.main.tempMax.round()}°C",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/cold.png',
-                                    scale: 8,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Temp Min',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        "${weatherResponse?.main.tempMin.round()}°C",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
+                            ),
+                      ),
                     ],
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Divider(color: Colors.grey[700]),
+                  ),
+
+                  // Temperature Min & Max
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildWeatherDetail(
+                        icon: 'assets/images/hot.png',
+                        title: 'Temp Max',
+                        value: "${weatherResponse.main.tempMax.round()}°C",
+                      ),
+                      _buildWeatherDetail(
+                        icon: 'assets/images/cold.png',
+                        title: 'Temp Min',
+                        value: "${weatherResponse.main.tempMin.round()}°C",
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
+                  // Hourly Forecast
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Today',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                      TextButton(
+                        child: Text('View full forecast'),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  HourlyForecast(position: position),
+                  SizedBox(height: 90),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
+    );
+  }
+
+// Helper Widget for Reuse
+  Widget _buildWeatherDetail(
+      {required String icon, required String title, required String value}) {
+    return Row(
+      children: [
+        Image.asset(icon, scale: 8),
+        SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: 15,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              value,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

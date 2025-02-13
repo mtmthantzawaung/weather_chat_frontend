@@ -21,4 +21,18 @@ class WeatherService {
       return apiResponse;
     }
   }
+
+  // Get Weather By City
+  Future<ApiResponse?> getHourlyWeather(String lat, String long) async {
+    final response = await _api
+        .getRequest("${ApiConstants.hourlyWeatherEndPoint}lat=$lat&long=$long");
+    final apiResponse = ApiResponse.fromJson(response);
+
+    if (response["success"] == true) {
+      return apiResponse;
+    } else {
+      logger.e("Get Hourly Weather failed. Please try again.");
+      return apiResponse;
+    }
+  }
 }

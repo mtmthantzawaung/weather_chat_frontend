@@ -7,7 +7,7 @@ import 'package:weather_chat_frontend/utils/enums/bottom_tab.dart';
 // Global keys for the home page and navigators
 final GlobalKey<ScaffoldState> homePageKey = GlobalKey<ScaffoldState>();
 
-final navigatorKeys = <TabItem, GlobalKey<NavigatorState>>{
+final navigatorKeys = {
   TabItem.weather: GlobalKey<NavigatorState>(),
   TabItem.user: GlobalKey<NavigatorState>(),
   TabItem.chat: GlobalKey<NavigatorState>(),
@@ -45,6 +45,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           children: TabItem.values
               .map(
                 (tabItem) => _TabPage(
+                  key: ValueKey(tabItem),
                   currentTab: currentTab,
                   tabItem: tabItem,
                   navigationKey: navigatorKeys[tabItem]!,
@@ -82,6 +83,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
 class _TabPage extends StatefulWidget {
   const _TabPage({
+    super.key,
     required this.currentTab,
     required this.tabItem,
     required this.navigationKey,

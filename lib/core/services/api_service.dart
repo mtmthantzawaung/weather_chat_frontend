@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:weather_chat_frontend/core/constants/api_constants.dart';
 import 'package:weather_chat_frontend/core/storage/secure_storage.dart';
+import 'package:weather_chat_frontend/models/api/api_response.dart';
 
 class ApiService {
   // GET
@@ -78,8 +79,11 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      final newAccessToken = jsonDecode(response.body)["accessToken"];
-      await SecureStorage.saveTokens(newAccessToken, refreshToken!);
+      final decodedData = jsonDecode(response.body);
+
+      final apiResponse = ApiResponse.fromJson(decodedData);
+      await SecureStorage.saveTokens(
+          apiResponse.data["accessToken"], refreshToken!);
       return true;
     }
     return false;
