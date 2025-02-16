@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_chat_frontend/presentations/messager_home/messager_home_page.dart';
 import 'package:weather_chat_frontend/presentations/weather/weather.dart';
 
 enum TabItem {
@@ -25,7 +26,7 @@ extension TabItemEx on TabItem {
       case TabItem.user:
         return (context) => Center(child: Text('User'));
       case TabItem.chat:
-        return (context) => Center(child: Text('Chat'));
+        return (context) => MessagerHomePage();
       case TabItem.setting:
         return (context) => Center(child: Text('Setting'));
     }
