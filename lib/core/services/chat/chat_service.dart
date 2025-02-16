@@ -8,7 +8,6 @@ class ChatService {
   ChatService(this._api);
 
   Future<ApiResponse?> fetchMessage() async {
-    final response =
-        await _api.getRequest(ApiConstants().loginEndpoint,);
+    final response = await _api.getRequest(ApiConstants.getAllMessages);
   }
 }
