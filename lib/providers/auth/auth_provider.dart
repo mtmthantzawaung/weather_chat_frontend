@@ -2,6 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:weather_chat_frontend/app/logger.dart';
 import 'package:weather_chat_frontend/core/services/api_service.dart';
 import 'package:weather_chat_frontend/core/services/auth/auth_service.dart';
+import 'package:weather_chat_frontend/core/services/socket/socket_service.dart';
 import 'package:weather_chat_frontend/core/storage/secure_storage.dart';
 import 'package:weather_chat_frontend/models/request/login/login_request.dart';
 import 'package:weather_chat_frontend/models/request/register/register_request.dart';
@@ -38,6 +39,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         final user = User.fromJson(response.data["user"]);
         state = state.copyWith(user: user, isLoading: false);
         logger.f("✅ Login Successful: ${response.message}");
+
+        // ✅ Socket connection initialize here
+        SocketService socketService = SocketService();
+        socketService.connect(user.id!);
       } else {
         logger.e("❌ Login Failed : ${response.message}");
         state =

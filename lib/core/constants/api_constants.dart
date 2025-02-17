@@ -7,7 +7,7 @@ class ApiConstants {
   static const String refreshEndpoint = "/auth/refresh-token";
 
   // User
-  static const String getAllUserEndpoint = "/users";
+  static const String getUserEndpoint = "/user";
 
   // Weather
   static const String weatherByCityEndPoint = "/weather?city=";
@@ -15,5 +15,7 @@ class ApiConstants {
   static const String hourlyWeatherEndPoint = "/weather/hourly?";
 
   // User
-  static const String getAllMessages = "/chat/message";
+  static const String getMessages = "/chat";
+  static const String getRecentMessages = "/chat/recent";
+  static const String sendMessages = "/chat/send";
 }

@@ -25,6 +25,7 @@ class ApiService {
     }
 
     try {
+      final dd = jsonDecode(response.body);
       return jsonDecode(response.body) as Map<String, dynamic>;
     } catch (e) {
       return {

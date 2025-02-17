@@ -8,18 +8,34 @@ part of 'message.dart';
 
 _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
     _$MessageImpl(
-      id: json['id'] as String,
+      id: json['_id'] as String?,
       senderId: json['senderId'] as String,
       receiverId: json['receiverId'] as String,
-      text: json['text'] as String,
-      timestamp: json['timestamp'] as String,
+      message: json['message'] as String,
+      createdAt: const DateConverter().fromJson(json['createdAt'] as String),
+      updatedAt: _$JsonConverterFromJson<String, DateTime>(
+          json['updatedAt'], const DateConverter().fromJson),
     );
 
 Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'senderId': instance.senderId,
       'receiverId': instance.receiverId,
-      'text': instance.text,
-      'timestamp': instance.timestamp,
+      'message': instance.message,
+      'createdAt': const DateConverter().toJson(instance.createdAt),
+      'updatedAt': _$JsonConverterToJson<String, DateTime>(
+          instance.updatedAt, const DateConverter().toJson),
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);

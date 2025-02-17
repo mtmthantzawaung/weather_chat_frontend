@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_chat_frontend/models/message/message.dart';
 
 class ReplyMessage extends StatefulWidget {
-  const ReplyMessage({super.key});
+  const ReplyMessage({super.key, required this.message});
+  final Message message;
 
   @override
   State<ReplyMessage> createState() => _ReplyMessageState();
@@ -34,7 +37,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                   bottom: 20,
                 ),
                 child: Text(
-                  "hey",
+                  widget.message.message,
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -44,7 +47,7 @@ class _ReplyMessageState extends State<ReplyMessage> {
                 bottom: 4,
                 right: 10,
                 child: Text(
-                  "20:58",
+                  DateFormat("hh:mm a").format(widget.message.createdAt),
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.grey[600],

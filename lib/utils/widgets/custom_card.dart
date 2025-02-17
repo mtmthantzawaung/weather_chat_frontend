@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:weather_chat_frontend/models/chat/chat_model.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_chat_frontend/models/chat/chat.dart';
 import 'package:weather_chat_frontend/presentations/chat/chat_page.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
-    required this.chats,
+    required this.chat,
   });
 
-  final ChatModel chats;
+  final Chat chat;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class CustomCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ChatPage(chatModel: chats),
+            builder: (context) => ChatPage(chat: chat),
           ),
         );
       },
@@ -26,11 +27,10 @@ class CustomCard extends StatelessWidget {
             leading: CircleAvatar(
               radius: 30,
               backgroundColor: Colors.blueGrey,
-              // TODO : Change User Profile
-              child: chats.isGroup ? Icon(Icons.groups_2) : Icon(Icons.person),
+              child: chat.isGroup ? Icon(Icons.groups_2) : Icon(Icons.person),
             ),
             title: Text(
-              chats.name,
+              chat.chatName!,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
@@ -42,10 +42,10 @@ class CustomCard extends StatelessWidget {
                 SizedBox(
                   width: 3,
                 ),
-                Text(chats.currentMessage, style: TextStyle(fontSize: 13)),
+                Text(chat.lastMessage, style: TextStyle(fontSize: 13)),
               ],
             ),
-            trailing: Text(chats.time),
+            trailing: Text(DateFormat("hh:mm a").format(chat.createdAt)),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 80, right: 20),

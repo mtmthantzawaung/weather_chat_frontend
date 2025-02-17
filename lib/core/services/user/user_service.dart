@@ -11,7 +11,26 @@ class UserService {
   // Get All User
   Future<ApiResponse?> getAllUser() async {
     try {
-      final response = await _api.getRequest(ApiConstants.getAllUserEndpoint);
+      final response = await _api.getRequest(ApiConstants.getUserEndpoint);
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (response["success"] == true) {
+        return apiResponse;
+      } else {
+        logger.e("Get User failed. Please try again.");
+        return apiResponse;
+      }
+    } catch (e) {
+      logger.e("Get User Error: $e");
+      throw Exception("Get User Error: $e");
+    }
+  }
+
+  // Get User
+  Future<ApiResponse?> getUserById(String userId) async {
+    try {
+      final response =
+          await _api.getRequest("${ApiConstants.getUserEndpoint}/$userId");
       final apiResponse = ApiResponse.fromJson(response);
 
       if (response["success"] == true) {

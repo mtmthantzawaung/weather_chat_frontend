@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_chat_frontend/models/message/message.dart';
 
 class OwnMessage extends StatefulWidget {
-  const OwnMessage({super.key});
+  const OwnMessage({super.key, required this.message});
+  final Message message;
 
   @override
   State<OwnMessage> createState() => _OwnMessageState();
@@ -36,7 +38,7 @@ class _OwnMessageState extends State<OwnMessage> {
                   bottom: 20,
                 ),
                 child: Text(
-                  "hey",
+                  widget.message.message,
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -49,7 +51,7 @@ class _OwnMessageState extends State<OwnMessage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      "20:58",
+                      DateFormat("hh:mm a").format(widget.message.createdAt),
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey[600],

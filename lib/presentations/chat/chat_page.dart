@@ -1,40 +1,35 @@
-<<<<<<< HEAD
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-class ChatPage extends ConsumerWidget {
-  const ChatPage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container();
-=======
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:weather_chat_frontend/models/chat/chat_model.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:weather_chat_frontend/models/chat/chat.dart';
+import 'package:weather_chat_frontend/providers/auth/auth_provider.dart';
+import 'package:weather_chat_frontend/providers/message/message_provider.dart';
 import 'package:weather_chat_frontend/utils/widgets/own_message.dart';
 import 'package:weather_chat_frontend/utils/widgets/reply_mesage.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class ChatPage extends StatefulWidget {
+class ChatPage extends ConsumerStatefulWidget {
   const ChatPage({
     super.key,
-    required this.chatModel,
+    required this.chat,
   });
-  final ChatModel chatModel;
+  final Chat chat;
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  ConsumerState<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends ConsumerState<ChatPage> {
   bool showEmoji = false;
   late FocusNode focusNode;
   late TextEditingController _controller;
   bool sendButton = false;
+  IO.Socket? socket;
 
   @override
   void initState() {
     super.initState();
+    connect();
     _controller = TextEditingController();
     focusNode = FocusNode()
       ..addListener(
@@ -48,6 +43,15 @@ class _ChatPageState extends State<ChatPage> {
       );
   }
 
+  void connect() {
+    socket = IO.io("http://10.0.2.2:3000", {
+      'transports': ['websocket'],
+      'autoConnect': false,
+    });
+    socket!.connect();
+    socket!.emit('userJoined', "2");
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -57,6 +61,15 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final messageState = ref.watch(messageStateProvider(widget.chat.user!.id!));
+    final authState = ref.watch(authStateProvider);
+
+    if (messageState.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
@@ -91,7 +104,7 @@ class _ChatPageState extends State<ChatPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.chatModel.name,
+                  widget.chat.chatName!,
                   style: TextStyle(fontSize: 18.5, fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -141,7 +154,7 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       body: SafeArea(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: PopScope(
@@ -159,12 +172,19 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 SizedBox(
                   height: MediaQuery.of(context).size.height - 140,
-                  child: ListView(
+                  child: ListView.builder(
+                    itemCount: messageState.messages.length,
                     shrinkWrap: true,
-                    children: [
-                      OwnMessage(),
-                      ReplyMessage(),
-                    ],
+                    itemBuilder: (context, index) {
+                      final message = messageState.messages[index];
+                      final isOwnerMessage =
+                          message.senderId == authState.user!.id!
+                              ? true
+                              : false;
+                      return isOwnerMessage
+                          ? OwnMessage(message: message)
+                          : ReplyMessage(message: message);
+                    },
                   ),
                 ),
                 Align(
@@ -278,6 +298,5 @@ class _ChatPageState extends State<ChatPage> {
         });
       },
     );
->>>>>>> e53ebcacde35326c2424fd0147b55289d8549bf9
   }
 }
