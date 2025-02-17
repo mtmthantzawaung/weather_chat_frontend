@@ -12,6 +12,10 @@ class MyApp extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
 
     return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.blueAccent,
+        fontFamily: "OpenSans",
+      ),
       debugShowCheckedModeBanner: false,
       home: authState.user == null ? Welcome() : HomePage(),
     );

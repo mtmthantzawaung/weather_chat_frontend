@@ -13,4 +13,7 @@ class ApiConstants {
   static const String weatherByCityEndPoint = "/weather?city=";
   static const String weeklyWeatherEndPoint = "/weather/weekly?";
   static const String hourlyWeatherEndPoint = "/weather/hourly?";
+
+  // User
+  static const String getAllMessages = "/chat/message";
 }

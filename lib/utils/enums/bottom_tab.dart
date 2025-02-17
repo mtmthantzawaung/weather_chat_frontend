@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather_chat_frontend/presentations/chat/chat_page.dart';
+import 'package:weather_chat_frontend/presentations/messager_home/messager_home_page.dart';
 import 'package:weather_chat_frontend/presentations/weather/weather.dart';
 import 'package:weather_chat_frontend/presentations/weather/widgets/search_page.dart';
 
@@ -27,7 +27,7 @@ extension TabItemEx on TabItem {
       case TabItem.search:
         return (context) => SearchPage();
       case TabItem.chat:
-        return (context) => ChatPage();
+        return (context) => MessagerHomePage();
       case TabItem.setting:
         return (context) => Center(child: Text('Setting'));
     }
