@@ -38,14 +38,12 @@ class _WeatherState extends ConsumerState<Weather> {
             .getWeatherByCity(selectedCity);
       } else {
         position = await HelperFunction.getCurrentLocation();
-        if (position != null) {
-          final userCity = await HelperFunction.getCityFromCoordinates(
-              position!.latitude, position!.longitude);
-          if (userCity != null) {
-            await ref
-                .read(weatherStateProvider.notifier)
-                .getWeatherByCity(userCity);
-          }
+        final userCity = await HelperFunction.getCityFromCoordinates(
+            position.latitude, position.longitude);
+        if (userCity != null) {
+          await ref
+              .read(weatherStateProvider.notifier)
+              .getWeatherByCity(userCity);
         }
       }
     } catch (e) {

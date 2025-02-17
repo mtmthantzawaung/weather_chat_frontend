@@ -30,8 +30,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/cold.png
   AssetGenImage get cold => const AssetGenImage('assets/images/cold.png');
 
+  /// File path: assets/images/glass.png
+  AssetGenImage get glass => const AssetGenImage('assets/images/glass.png');
+
   /// File path: assets/images/hot.png
   AssetGenImage get hot => const AssetGenImage('assets/images/hot.png');
+
+  /// File path: assets/images/loupe.png
+  AssetGenImage get loupe => const AssetGenImage('assets/images/loupe.png');
 
   /// File path: assets/images/messenger.png
   AssetGenImage get messenger =>
@@ -42,6 +48,9 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/rainny.json
   String get rainny => 'assets/images/rainny.json';
+
+  /// File path: assets/images/search.png
+  AssetGenImage get search => const AssetGenImage('assets/images/search.png');
 
   /// File path: assets/images/snow.json
   String get snow => 'assets/images/snow.json';
@@ -68,10 +77,13 @@ class $AssetsImagesGen {
     cloudyIcon,
     cloudyRainny,
     cold,
+    glass,
     hot,
+    loupe,
     messenger,
     moon,
     rainny,
+    search,
     snow,
     sun,
     sunny,

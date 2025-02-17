@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:weather_chat_frontend/presentations/chat/chat_page.dart';
 import 'package:weather_chat_frontend/presentations/weather/weather.dart';
+import 'package:weather_chat_frontend/presentations/weather/widgets/search_page.dart';
 
 enum TabItem {
   weather(labelText: 'Weather'),
-  user(labelText: 'User'),
+  search(labelText: 'Search'),
   chat(labelText: 'Chat'),
   setting(labelText: 'Setting');
 
@@ -22,10 +24,10 @@ extension TabItemEx on TabItem {
     switch (this) {
       case TabItem.weather:
         return (context) => Weather();
-      case TabItem.user:
-        return (context) => Center(child: Text('User'));
+      case TabItem.search:
+        return (context) => SearchPage();
       case TabItem.chat:
-        return (context) => Center(child: Text('Chat'));
+        return (context) => ChatPage();
       case TabItem.setting:
         return (context) => Center(child: Text('Setting'));
     }
@@ -35,12 +37,12 @@ extension TabItemEx on TabItem {
     switch (this) {
       case TabItem.weather:
         return Icons.cloud;
-      case TabItem.user:
-        return Icons.account_circle_outlined;
+      case TabItem.search:
+        return Icons.search;
       case TabItem.chat:
         return Icons.chat;
       case TabItem.setting:
-        return Icons.account_circle_outlined;
+        return Icons.settings;
     }
   }
 
@@ -48,7 +50,7 @@ extension TabItemEx on TabItem {
     switch (this) {
       case TabItem.weather:
         return 27;
-      case TabItem.user:
+      case TabItem.search:
         return 27;
       case TabItem.chat:
         return 27;

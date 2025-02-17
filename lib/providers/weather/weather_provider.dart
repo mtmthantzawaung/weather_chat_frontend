@@ -1,10 +1,11 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:weather_chat_frontend/app/logger.dart';
+import 'package:weather_chat_frontend/core/repository/db_helper.dart';
 import 'package:weather_chat_frontend/core/services/api_service.dart';
 import 'package:weather_chat_frontend/core/services/weather/weather_service.dart';
-import 'package:weather_chat_frontend/models/api/api_response.dart';
 import 'package:weather_chat_frontend/models/hourly_weather.dart/hourly_weather.dart';
 import 'package:weather_chat_frontend/models/weekly_weather/weekly_weather.dart';
 import 'package:weather_chat_frontend/models/weather/weather_response.dart';
@@ -45,18 +46,29 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
   Future<void> getWeatherByCity(String city) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final response = await _weatherService.getWeatherByCities(city);
-      if (response == null) throw ("Get Weather failed.");
-
-      if (response.success) {
-        final weatherResponse = WeatherResponse.fromJson(response.data);
-        state =
-            state.copyWith(weatherResponse: weatherResponse, isLoading: false);
-        logger.f("✅ Get Weather Successful: ${response.message}");
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        final dbHelper = DatabaseHelper();
+        final weatherResponse = await dbHelper.getWeatherResponse(1);
+        if (weatherResponse != null) {
+          logger.f("Get From Local Storage :  ${weatherResponse.name}");
+          state = state.copyWith(
+              weatherResponse: weatherResponse, isLoading: false);
+        }
       } else {
-        logger.e("❌ Get Weather Failed : ${response.message}");
-        state =
-            state.copyWith(errorMessage: response.message, isLoading: false);
+        final response = await _weatherService.getWeatherByCities(city);
+        if (response == null) throw ("Get Weather failed.");
+
+        if (response.success) {
+          final weatherResponse = WeatherResponse.fromJson(response.data);
+          state = state.copyWith(
+              weatherResponse: weatherResponse, isLoading: false);
+          logger.f("✅ Get Weather Successful: ${response.message}");
+        } else {
+          logger.e("❌ Get Weather Failed : ${response.message}");
+          state =
+              state.copyWith(errorMessage: response.message, isLoading: false);
+        }
       }
     } on Exception catch (e) {
       state = state.copyWith(
@@ -64,29 +76,6 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
       logger.e('❌ Get Weather error: $e');
     }
   }
-
-  // Future<void> getHourlyWeather(String lat, String long) async {
-  //   state = state.copyWith(isLoading: true, errorMessage: null);
-  //   try {
-  //     final response = await _weatherService.getHourlyWeather(lat, long);
-  //     if (response == null) throw ("Get Hourly Weather failed.");
-
-  //     if (response.success) {
-  //       final weatherResponse = HourlyWeather.fromJson(response.data);
-  //       state =
-  //           state.copyWith(weatherResponse: weatherResponse, isLoading: false);
-  //       logger.f("✅ Get Weather Successful: ${response.message}");
-  //     } else {
-  //       logger.e("❌ Get Weather Failed : ${response.message}");
-  //       state =
-  //           state.copyWith(errorMessage: response.message, isLoading: false);
-  //     }
-  //   } on Exception catch (e) {
-  //     state = state.copyWith(
-  //         errorMessage: "An error occurred. Try again.", isLoading: false);
-  //     logger.e('❌ Get Weather error: $e');
-  //   }
-  // }
 }
 
 // Weekly Weather

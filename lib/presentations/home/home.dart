@@ -9,7 +9,7 @@ final GlobalKey<ScaffoldState> homePageKey = GlobalKey<ScaffoldState>();
 
 final navigatorKeys = {
   TabItem.weather: GlobalKey<NavigatorState>(),
-  TabItem.user: GlobalKey<NavigatorState>(),
+  TabItem.search: GlobalKey<NavigatorState>(),
   TabItem.chat: GlobalKey<NavigatorState>(),
   TabItem.setting: GlobalKey<NavigatorState>(),
 };
@@ -31,10 +31,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       onPopInvokedWithResult: (didPop, result) async {
         // Handle back navigation within the current tab
         if (!didPop) {
-          final isFirstRouteInCurrentTab =
-              !await navigatorKeys[currentTab]!.currentState!.maybePop();
-          if (isFirstRouteInCurrentTab) {
-            return; // Prevent popping if it's the first route
+          final navigatorState = navigatorKeys[currentTab]?.currentState;
+          if (navigatorState != null) {
+            final isFirstRouteInCurrentTab = !await navigatorState.maybePop();
+            if (isFirstRouteInCurrentTab) {
+              return; // Prevent popping if it's the first route
+            }
           }
         }
       },
@@ -45,7 +47,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           children: TabItem.values
               .map(
                 (tabItem) => _TabPage(
-                  key: ValueKey(tabItem),
+                  key: ValueKey(tabItem), // Unique key for each _TabPage
                   currentTab: currentTab,
                   tabItem: tabItem,
                   navigationKey: navigatorKeys[tabItem]!,
@@ -108,8 +110,10 @@ class _TabPageState extends State<_TabPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        'Building _TabPage for ${widget.tabItem} with key ${widget.navigationKey}');
     return Offstage(
-      offstage: widget.currentTab != widget.tabItem, // Hide inactive tabs
+      offstage: widget.currentTab != widget.tabItem,
       child: Navigator(
         key: widget.navigationKey,
         observers: [_heroController],
