@@ -48,14 +48,9 @@ class _WeatherState extends ConsumerState<Weather> {
       }
     } catch (e) {
       logger.e("Failed to load weather: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Failed to load weather data"),
-          action: SnackBarAction(
-            label: "Retry",
-            onPressed: _loadWeather,
-          ),
-        ),
+      ElevatedButton(
+        onPressed: () => _loadWeather(), // ✅ Fix: Ensure it runs properly
+        child: Icon(Icons.restart_alt),
       );
     }
   }

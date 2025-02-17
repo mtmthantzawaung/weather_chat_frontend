@@ -5,11 +5,21 @@ import 'package:weather_chat_frontend/models/message/message.dart';
 import 'package:weather_chat_frontend/models/user/User.dart';
 
 class SocketService {
+  static final SocketService _instance = SocketService._internal();
+  factory SocketService() => _instance;
+
+  SocketService._internal();
+
   IO.Socket? socket;
   final messageStreamController = StreamController<Message>.broadcast();
   final updatedUserStreamController = StreamController<List<User>>.broadcast();
 
   void connect(String userId) {
+    if (socket != null && socket!.connected) {
+      logger.f("🔗 Socket already connected.");
+      return;
+    }
+
     socket = IO.io(
       'http://10.0.2.2:3000',
       IO.OptionBuilder()
@@ -44,6 +54,9 @@ class SocketService {
   }
 
   void sendMessage(String senderId, String receiverId, String message) {
+    if (socket == null || !socket!.connected) {
+      logger.e("❌ Cannot send message, socket is null or disconnected.");
+    }
     socket!.emit('sendMessage', {
       'senderId': senderId,
       'receiverId': receiverId,

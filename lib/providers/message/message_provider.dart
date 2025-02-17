@@ -6,11 +6,12 @@ import 'package:weather_chat_frontend/core/services/chat/chat_service.dart';
 import 'package:weather_chat_frontend/core/services/socket/socket_service.dart';
 import 'package:weather_chat_frontend/models/message/message.dart';
 import 'package:weather_chat_frontend/providers/message/message_state.dart';
+import 'package:weather_chat_frontend/providers/socket/socket_provider.dart';
 
 final messageStateProvider =
     StateNotifierProvider.family<MessageNotifier, MessageState, String>(
-  (ref, receiverId) =>
-      MessageNotifier(ApiService(), SocketService(), receiverId),
+  (ref, receiverId) => MessageNotifier(
+      ApiService(), ref.read(socketServiceProvider), receiverId),
 );
 
 class MessageNotifier extends StateNotifier<MessageState> {
@@ -65,7 +66,6 @@ class MessageNotifier extends StateNotifier<MessageState> {
 
   Future<void> sendMessage(
       String senderId, String receiverId, String message) async {
-    state = state.copyWith(isLoading: true);
     try {
       // Send message via socket
       socketService.sendMessage(senderId, receiverId, message);

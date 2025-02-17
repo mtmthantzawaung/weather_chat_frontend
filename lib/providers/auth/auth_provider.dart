@@ -41,8 +41,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         logger.f("✅ Login Successful: ${response.message}");
 
         // ✅ Socket connection initialize here
-        SocketService socketService = SocketService();
-        socketService.connect(user.id!);
+        // SocketService socketService = SocketService();
+        // socketService.connect(user.id!);
       } else {
         logger.e("❌ Login Failed : ${response.message}");
         state =

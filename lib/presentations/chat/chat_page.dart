@@ -29,7 +29,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   @override
   void initState() {
     super.initState();
-    connect();
     _controller = TextEditingController();
     focusNode = FocusNode()
       ..addListener(
@@ -43,15 +42,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       );
   }
 
-  void connect() {
-    socket = IO.io("http://10.0.2.2:3000", {
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
-    socket!.connect();
-    socket!.emit('userJoined', "2");
-  }
-
   @override
   void dispose() {
     _controller.dispose();
@@ -62,6 +52,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   @override
   Widget build(BuildContext context) {
     final messageState = ref.watch(messageStateProvider(widget.chat.user!.id!));
+    final messageNotifier =
+        ref.watch(messageStateProvider(widget.chat.user!.id!).notifier);
     final authState = ref.watch(authStateProvider);
 
     if (messageState.isLoading) {
@@ -270,7 +262,17 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                                   sendButton ? Icons.send : Icons.mic,
                                   color: Colors.white,
                                 ),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  if (sendButton) {
+                                    await messageNotifier.sendMessage(
+                                      authState.user!.id!,
+                                      widget.chat.user!.id!,
+                                      _controller.text,
+                                    );
+                                    _controller.text = "";
+                                    sendButton = false;
+                                  }
+                                },
                               ),
                             ),
                           ),

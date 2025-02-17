@@ -1,4 +1,4 @@
-import 'package:camera/camera.dart';
+
 import 'package:flutter/material.dart';
 import 'package:weather_chat_frontend/presentations/messager_home/tabs/camera_screen.dart';
 

@@ -18,6 +18,21 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   late CameraController _cameraController;
   late Future<void> _cameraValue;
+  bool isRecording = false;
+  int selectedCameraIndex = 0;
+
+  void switchCamera() async {
+    if (cameras == null || cameras!.isEmpty) return;
+    selectedCameraIndex = (selectedCameraIndex + 1) % cameras!.length;
+
+    await _cameraController.dispose();
+    _cameraController = CameraController(
+      cameras![selectedCameraIndex],
+      ResolutionPreset.high,
+    );
+    _cameraValue = _cameraController.initialize();
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -36,13 +51,19 @@ class _CameraScreenState extends State<CameraScreen> {
 
   /// Function to take a photo and navigate to preview screen
   void takePhoto(BuildContext context) async {
+    if (!_cameraController.value.isInitialized) {
+      debugPrint("Camera is not initialized!");
+      return;
+    }
+
     try {
       final tempDir = await getTemporaryDirectory();
       final String filePath =
           join(tempDir.path, "${DateTime.now().millisecondsSinceEpoch}.png");
 
       XFile imageFile = await _cameraController.takePicture();
-      File(imageFile.path).copy(filePath); // Ensure the file is properly stored
+      await File(imageFile.path)
+          .copy(filePath); // Ensure the file is properly stored
 
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -56,8 +77,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isRecording = false;
-
     return Scaffold(
       body: Stack(
         children: [
@@ -93,12 +112,14 @@ class _CameraScreenState extends State<CameraScreen> {
                       ),
                       GestureDetector(
                         onLongPress: () async {
+                          if (!_cameraController.value.isInitialized) return;
                           await _cameraController.startVideoRecording();
                           setState(() {
                             isRecording = true;
                           });
                         },
                         onLongPressUp: () async {
+                          if (!_cameraController.value.isRecordingVideo) return;
                           final tempDir = await getTemporaryDirectory();
                           final String filePath = join(tempDir.path,
                               "${DateTime.now().millisecondsSinceEpoch}.png");
@@ -130,7 +151,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           color: Colors.white,
                           size: 28,
                         ),
-                        onPressed: () {},
+                        onPressed: switchCamera,
                       ),
                     ],
                   ),

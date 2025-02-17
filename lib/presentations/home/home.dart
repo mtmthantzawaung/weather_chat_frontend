@@ -7,12 +7,12 @@ import 'package:weather_chat_frontend/utils/enums/bottom_tab.dart';
 // Global keys for the home page and navigators
 final GlobalKey<ScaffoldState> homePageKey = GlobalKey<ScaffoldState>();
 
-final navigatorKeys = {
-  TabItem.weather: GlobalKey<NavigatorState>(),
-  TabItem.search: GlobalKey<NavigatorState>(),
-  TabItem.chat: GlobalKey<NavigatorState>(),
-  TabItem.setting: GlobalKey<NavigatorState>(),
-};
+// final navigatorKeys = {
+//   TabItem.weather: GlobalKey<NavigatorState>(),
+//   TabItem.search: GlobalKey<NavigatorState>(),
+//   TabItem.chat: GlobalKey<NavigatorState>(),
+//   TabItem.setting: GlobalKey<NavigatorState>(),
+// };
 
 class HomePage extends StatefulHookConsumerWidget {
   const HomePage({super.key});
@@ -22,6 +22,13 @@ class HomePage extends StatefulHookConsumerWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  final Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
+    TabItem.weather: GlobalKey<NavigatorState>(),
+    TabItem.search: GlobalKey<NavigatorState>(),
+    TabItem.chat: GlobalKey<NavigatorState>(),
+    TabItem.setting: GlobalKey<NavigatorState>(),
+  };
+
   @override
   Widget build(BuildContext context) {
     final currentTab = ref.watch(currentTabStateProvider);
