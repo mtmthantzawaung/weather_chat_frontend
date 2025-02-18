@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_chat_frontend/models/chat/chat.dart';
-import 'package:weather_chat_frontend/presentations/chat/chat_page.dart';
+import 'package:weather_chat_frontend/presentations/messager_home/tabs/chat/chat_page.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
     required this.chat,
+    required this.isActive,
   });
 
   final Chat chat;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +19,30 @@ class CustomCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ChatPage(chat: chat),
+            builder: (context) => ChatPage(chat: chat, isActive: isActive),
           ),
         );
       },
       child: Column(
         children: [
           ListTile(
-            leading: CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blueGrey,
-              child: chat.isGroup ? Icon(Icons.groups_2) : Icon(Icons.person),
+            leading: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.blueGrey,
+                  child:
+                      chat.isGroup ? Icon(Icons.groups_2) : Icon(Icons.person),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 1,
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: isActive ? Colors.green : Colors.grey,
+                  ),
+                ),
+              ],
             ),
             title: Text(
               chat.chatName!,

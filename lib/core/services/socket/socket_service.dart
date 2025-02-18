@@ -12,7 +12,8 @@ class SocketService {
 
   IO.Socket? socket;
   final messageStreamController = StreamController<Message>.broadcast();
-  final updatedUserStreamController = StreamController<List<User>>.broadcast();
+  final updatedUserStreamController =
+      StreamController<List<String>>.broadcast();
 
   void connect(String userId) {
     if (socket != null && socket!.connected) {
@@ -41,8 +42,7 @@ class SocketService {
 
     socket!.on('updateUserList', (data) {
       logger.f("updated user : $data");
-      List<User> updatedUsers =
-          List<User>.from(data.map((userData) => User.fromJson(userData)));
+      List<String> updatedUsers = List<String>.from(data);
       updatedUserStreamController.add(updatedUsers); // Add to the stream
     });
 

@@ -12,8 +12,10 @@ class ChatPage extends ConsumerStatefulWidget {
   const ChatPage({
     super.key,
     required this.chat,
+    required this.isActive,
   });
   final Chat chat;
+  final bool isActive;
 
   @override
   ConsumerState<ChatPage> createState() => _ChatPageState();
@@ -78,11 +80,25 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 Icons.arrow_back_ios,
                 size: 24,
               ),
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.blueGrey,
-                // TODO : Change User Profile
-                child: Icon(Icons.person),
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.blueGrey,
+                    child: widget.chat.isGroup
+                        ? Icon(Icons.groups_2)
+                        : Icon(Icons.person),
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 1,
+                    child: CircleAvatar(
+                      radius: 8,
+                      backgroundColor:
+                          widget.isActive ? Colors.green : Colors.grey,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

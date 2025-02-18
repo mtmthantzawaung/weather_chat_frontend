@@ -3,22 +3,26 @@ import 'package:weather_chat_frontend/app/logger.dart';
 import 'package:weather_chat_frontend/core/services/api_service.dart';
 import 'package:weather_chat_frontend/core/services/auth/auth_service.dart';
 import 'package:weather_chat_frontend/core/services/chat/chat_service.dart';
+import 'package:weather_chat_frontend/core/services/socket/socket_service.dart';
 import 'package:weather_chat_frontend/core/services/user/user_service.dart';
 import 'package:weather_chat_frontend/models/chat/chat.dart';
 import 'package:weather_chat_frontend/models/message/message.dart';
 import 'package:weather_chat_frontend/models/user/User.dart';
 import 'package:weather_chat_frontend/providers/chat_tab/chat_tab_state.dart';
+import 'package:weather_chat_frontend/providers/socket/socket_provider.dart';
 
 final chatTabStateProvider =
     StateNotifierProvider<ChatTabNotifier, ChatTabState>(
-  (ref) => ChatTabNotifier(ApiService()),
+  (ref) => ChatTabNotifier(ApiService(), ref.read(socketServiceProvider)),
 );
 
 class ChatTabNotifier extends StateNotifier<ChatTabState> {
   final ApiService api;
+  final SocketService socketService;
 
-  ChatTabNotifier(this.api) : super(ChatTabState()) {
+  ChatTabNotifier(this.api, this.socketService) : super(ChatTabState()) {
     _loadInitialData();
+    _listenToActiveUserIds();
   }
 
   Future<void> _loadInitialData() async {
@@ -76,39 +80,17 @@ class ChatTabNotifier extends StateNotifier<ChatTabState> {
     }
   }
 
-  // void _setupSocketListeners() {
-  //   _socketService.socket?.on('updateUserList', (data) {
-  //     // Update active users list
-  //     final activeUsers =
-  //         (data as List).map((user) => User.fromJson(user)).toList();
-  //     state = state.copyWith(activeUsers: activeUsers);
-  //   });
+  void _listenToActiveUserIds() {
+    socketService.updatedUserStreamController.stream.listen((userIds) {
+      state =
+          state.copyWith(activeUserIds: [...state.activeUserIds, ...userIds]);
+    });
+  }
 
-  //   _socketService.socket?.on('receiveMessage', (data) {
-  //     // Add received message to the state
-  //     final message = Message.fromJson(data);
-  //     state = state.copyWith(messages: [...state.messages, message]);
-  //   });
-  // }
-
-  // Future<void> sendMessage(String text) async {
-  //   try {
-  //     _socketService.sendMessage(
-  //       state.selectedUser!.id,
-  //       state.selectedUser!.id,
-  //       text,
-  //     );
-  //     final message = await _chatService.sendMessage(text);
-
-  //     state = state.copyWith(messages: [...state.messages, message]);
-  //   } catch (e) {
-  //     state = state.copyWith(errorMessage: "Failed to send message");
-  //   }
-  // }
-
-  // @override
-  // void dispose() {
-  //   _socketService.disconnect();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    socketService.socket
+        ?.off('updateUserList'); // ✅ Remove listener when disposed
+    super.dispose();
+  }
 }

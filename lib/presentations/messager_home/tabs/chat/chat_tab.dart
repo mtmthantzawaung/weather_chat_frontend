@@ -18,7 +18,9 @@ class ChatTab extends ConsumerWidget {
       body: ListView.builder(
         itemCount: chatState.chats.length,
         itemBuilder: (context, index) {
-          return CustomCard(chat: chatState.chats[index]);
+          final chat = chatState.chats[index];
+          final isActive = chatState.activeUserIds.contains(chat.user!.id!);
+          return CustomCard(chat: chat, isActive: isActive);
         },
       ),
     );

@@ -8,7 +8,7 @@ part 'chat_tab_state.freezed.dart';
 class ChatTabState with _$ChatTabState {
   factory ChatTabState({
     @Default([]) List<Chat> chats,
-    @Default([]) List<User> activeUsers,
+    @Default([]) List<String> activeUserIds,
     @Default(false) bool isLoading,
     String? errorMessage,
   }) = _ChatState;

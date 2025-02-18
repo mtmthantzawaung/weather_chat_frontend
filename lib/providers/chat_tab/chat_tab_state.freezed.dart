@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ChatTabState {
   List<Chat> get chats => throw _privateConstructorUsedError;
-  List<User> get activeUsers => throw _privateConstructorUsedError;
+  List<String> get activeUserIds => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
@@ -36,7 +36,7 @@ abstract class $ChatTabStateCopyWith<$Res> {
   @useResult
   $Res call(
       {List<Chat> chats,
-      List<User> activeUsers,
+      List<String> activeUserIds,
       bool isLoading,
       String? errorMessage});
 }
@@ -57,7 +57,7 @@ class _$ChatTabStateCopyWithImpl<$Res, $Val extends ChatTabState>
   @override
   $Res call({
     Object? chats = null,
-    Object? activeUsers = null,
+    Object? activeUserIds = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
@@ -66,10 +66,10 @@ class _$ChatTabStateCopyWithImpl<$Res, $Val extends ChatTabState>
           ? _value.chats
           : chats // ignore: cast_nullable_to_non_nullable
               as List<Chat>,
-      activeUsers: null == activeUsers
-          ? _value.activeUsers
-          : activeUsers // ignore: cast_nullable_to_non_nullable
-              as List<User>,
+      activeUserIds: null == activeUserIds
+          ? _value.activeUserIds
+          : activeUserIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -92,7 +92,7 @@ abstract class _$$ChatStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {List<Chat> chats,
-      List<User> activeUsers,
+      List<String> activeUserIds,
       bool isLoading,
       String? errorMessage});
 }
@@ -111,7 +111,7 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? chats = null,
-    Object? activeUsers = null,
+    Object? activeUserIds = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
@@ -120,10 +120,10 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           ? _value._chats
           : chats // ignore: cast_nullable_to_non_nullable
               as List<Chat>,
-      activeUsers: null == activeUsers
-          ? _value._activeUsers
-          : activeUsers // ignore: cast_nullable_to_non_nullable
-              as List<User>,
+      activeUserIds: null == activeUserIds
+          ? _value._activeUserIds
+          : activeUserIds // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -141,11 +141,11 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 class _$ChatStateImpl implements _ChatState {
   _$ChatStateImpl(
       {final List<Chat> chats = const [],
-      final List<User> activeUsers = const [],
+      final List<String> activeUserIds = const [],
       this.isLoading = false,
       this.errorMessage})
       : _chats = chats,
-        _activeUsers = activeUsers;
+        _activeUserIds = activeUserIds;
 
   final List<Chat> _chats;
   @override
@@ -156,13 +156,13 @@ class _$ChatStateImpl implements _ChatState {
     return EqualUnmodifiableListView(_chats);
   }
 
-  final List<User> _activeUsers;
+  final List<String> _activeUserIds;
   @override
   @JsonKey()
-  List<User> get activeUsers {
-    if (_activeUsers is EqualUnmodifiableListView) return _activeUsers;
+  List<String> get activeUserIds {
+    if (_activeUserIds is EqualUnmodifiableListView) return _activeUserIds;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_activeUsers);
+    return EqualUnmodifiableListView(_activeUserIds);
   }
 
   @override
@@ -173,7 +173,7 @@ class _$ChatStateImpl implements _ChatState {
 
   @override
   String toString() {
-    return 'ChatTabState(chats: $chats, activeUsers: $activeUsers, isLoading: $isLoading, errorMessage: $errorMessage)';
+    return 'ChatTabState(chats: $chats, activeUserIds: $activeUserIds, isLoading: $isLoading, errorMessage: $errorMessage)';
   }
 
   @override
@@ -183,7 +183,7 @@ class _$ChatStateImpl implements _ChatState {
             other is _$ChatStateImpl &&
             const DeepCollectionEquality().equals(other._chats, _chats) &&
             const DeepCollectionEquality()
-                .equals(other._activeUsers, _activeUsers) &&
+                .equals(other._activeUserIds, _activeUserIds) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.errorMessage, errorMessage) ||
@@ -194,7 +194,7 @@ class _$ChatStateImpl implements _ChatState {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_chats),
-      const DeepCollectionEquality().hash(_activeUsers),
+      const DeepCollectionEquality().hash(_activeUserIds),
       isLoading,
       errorMessage);
 
@@ -210,14 +210,14 @@ class _$ChatStateImpl implements _ChatState {
 abstract class _ChatState implements ChatTabState {
   factory _ChatState(
       {final List<Chat> chats,
-      final List<User> activeUsers,
+      final List<String> activeUserIds,
       final bool isLoading,
       final String? errorMessage}) = _$ChatStateImpl;
 
   @override
   List<Chat> get chats;
   @override
-  List<User> get activeUsers;
+  List<String> get activeUserIds;
   @override
   bool get isLoading;
   @override
